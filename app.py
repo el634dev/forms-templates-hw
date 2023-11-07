@@ -18,16 +18,8 @@ def homepage():
 @app.route('/froyo')
 def choose_froyo():
     """Shows a form to collect the user's Fro-Yo order."""
-    return """
-    <form action="/froyo_results" method="GET">
-       What is your favorite Fro-Yo flavor? <br/>
-       <input type="text" name="flavor"><br/>
-       Toppings <br/>
-       <input type="text" name="toppings">
-       <input type="submit" value="Submit!">
-    </form>
-    """
-
+    return render_template("froyo_form.html")
+    
 #-------------------------------------------------------
 # Shows the user what frozen yogurt they have ordered
 @app.route('/froyo_results')
@@ -35,7 +27,13 @@ def show_froyo_results():
     """Shows the user what they ordered from the previous page."""
     users_froyo_flavor = request.args.get('flavor')
     users_froyo_topping = request.args.get('toppings')
-    return f'You ordered {users_froyo_flavor} flavored Fro-Yo with {users_froyo_topping}!'
+
+    context = {
+        'users_froyo_flavor': users_froyo_flavor,
+        'users_froyo_topping': users_froyo_topping, 
+    }
+
+    return render_template("froyo_results.html", **context)
 
 #-------------------------------------------------------
 # Form to retrive user's favorite color, animal and city
@@ -92,20 +90,7 @@ def message_results():
 @app.route('/calculator')
 def calculator():
     """Shows the user a form to enter 2 numbers and an operation."""
-    return """
-    <form action="/calculator_results" method="GET">
-        Please enter 2 numbers and select an operator.<br/><br/>
-        <input type="number" name="operand1">
-        <select name="operation">
-            <option value="add">+</option>
-            <option value="subtract">-</option>
-            <option value="multiply">*</option>
-            <option value="division">/</option>
-        </select>
-        <input type="number" name="operand2">
-        <input type="submit" value="Submit!">
-    </form>
-    """
+    return render_template("calculator_form.html")
 
 #-------------------------------------------------------
 # Show the user their results of their calculation
@@ -123,14 +108,14 @@ def calculator_results():
     users_product_result = int(users_operand_1 ) * int(users_operand_2)
     # Result of divding two numbers
     users_divide_result = int(users_operand_1 ) / int(users_operand_2)
-    
-    if users_operator in "+" or users_operator == "add":
+
+    if users_operator == "add":
         return f'You chose to add {users_operand_1} and {users_operand_2}. Your result is {users_operand_result}'
-    elif users_operator in "-" or users_operator == "subtract":
+    elif users_operator == "subtract":
         return f'You chose to subtract {users_operand_1} and {users_operand_2}. Your result is {users_subtract_result}'
     elif users_operator == "multiply":
-        return f'You chose to mulitply {users_operand_1} and {users_operand_2}. Your result is {users_product_result}'
-    elif users_operator == "division":
+        return f'You chose to multiply {users_operand_1} and {users_operand_2}. Your result is {users_product_result}'
+    elif users_operator == "divide":
         return f'You chose to divide {users_operand_1} and {users_operand_2}. Your result is: {users_divide_result}'
     else:
         return "Not a valid operation or operand, try again"
@@ -164,7 +149,6 @@ def horoscope_form():
 @app.route('/horoscope_results')
 def horoscope_results():
     """Shows the user the result for their chosen horoscope."""
-
     # Get the sign the user entered in the form, based on their birthday
     horoscope_sign = request.args.get('horoscope_sign')
 
